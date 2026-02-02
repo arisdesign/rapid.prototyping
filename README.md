@@ -18,7 +18,7 @@ arisdesign/
 
 All HTML files are viewable via GitHub Pages at:
 ```
-https://arisdesign.github.io/rapid.prototyping/
+https://arisdesign.github.io/early-concepts/
 ```
 
 ## Usage
