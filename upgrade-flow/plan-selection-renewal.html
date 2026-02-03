@@ -154,10 +154,10 @@
                             </span>
                         </label>
                         
-                        <!-- Prepay 12 months (Selected in screenshot) -->
+                        <!-- Prepay 12 months (Current - Selected) -->
                         <label class="billing-option flex-1 flex">
                             <input type="radio" name="billing" value="12months" class="sr-only" checked>
-                            <span class="flex flex-col justify-center w-full px-4 sm:px-6 py-3 rounded-lg sm:rounded-md text-center cursor-pointer border-2 border-ctct-border sm:border-transparent bg-white sm:bg-transparent transition-all">
+                            <span class="flex flex-col justify-center w-full px-4 sm:px-6 py-3 rounded-lg sm:rounded-md text-center cursor-pointer border-2 border-ctct-blue bg-white transition-all">
                                 <span class="block text-sm font-medium text-gray-900">Prepay 12 months</span>
                                 <span class="block text-xs text-green-600 font-medium">SAVE 15%</span>
                                 <span class="block text-xs text-ctct-gray">Current</span>
@@ -174,8 +174,15 @@
                     </div>
                 </div>
                 
-                <!-- Shorter payment terms message -->
-                <p class="text-sm text-ctct-gray mt-4">Shorter payment terms are available starting 30 days before your renewal date.</p>
+                <!-- Prominent Alert Banner for Payment Term Notice -->
+                <div class="mt-4 flex items-center gap-3 bg-ctct-warning-bg border border-ctct-warning/30 rounded-lg px-4 py-3">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 text-ctct-warning" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-gray-800">You can shorten your payment term up to 30 days before 02/10/2026.</p>
+                </div>
             </div>
 
             <!-- Plan Cards Grid -->
@@ -206,11 +213,9 @@
                     <p class="text-sm text-ctct-gray mb-6">Start marketing with award-winning email and social media tools.</p>
                     
                     <!-- CTA Button -->
-                    <button class="w-full py-3 px-4 rounded-full border-2 border-ctct-border text-ctct-gray font-semibold cursor-not-allowed bg-gray-50 mb-4" disabled>
+                    <button class="w-full py-3 px-4 rounded-full border-2 border-ctct-border text-ctct-gray font-semibold cursor-not-allowed bg-gray-50" disabled>
                         Downgrade
                     </button>
-                    
-                    <p class="text-xs text-ctct-gray text-center">Switch to this plan at least 30 days before you renew</p>
                 </div>
 
                 <!-- Standard Plan (Current) -->
@@ -271,6 +276,16 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Downgrade Warning Alert -->
+            <div class="mt-6 flex items-center gap-3 bg-ctct-warning-bg border border-ctct-warning/30 rounded-lg px-4 py-3">
+                <div class="flex-shrink-0">
+                    <svg class="w-5 h-5 text-ctct-warning" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <p class="text-sm text-gray-800">You can downgrade plan up to 30 days before 02/10/2026.</p>
             </div>
             
         </div>
