@@ -443,6 +443,9 @@
                 }
             }
             
+            // SMS Marketing is always pre-purchased - ensure it's always included
+            addons['SMS Marketing'] = true;
+            
             console.log('Final selectedAddons:', addons);
             return addons;
         }
