@@ -297,32 +297,64 @@
             }
         };
 
-        // Save addonsConfig immediately so checkout page always has it
-        localStorage.setItem('addonsConfig', JSON.stringify(addonsConfig));
-
-        // Initialize selected addons from localStorage or default
-        let selectedAddons = JSON.parse(localStorage.getItem('selectedAddons')) || {};
-        
-        // SMS Marketing is always pre-added (already purchased) - ensure it's always included
-        selectedAddons['SMS Marketing'] = true;
-
         // Checkmark SVG for selected state
         const checkmarkSvg = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" fill="white" stroke="white" stroke-width="0"/>
             <path stroke="#1856ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 13l3 3 7-7"/>
         </svg>`;
 
+        // Get selected addons from localStorage (returns fresh copy each time)
+        function getSelectedAddons() {
+            try {
+                const stored = localStorage.getItem('selectedAddons');
+                console.log('Reading selectedAddons from localStorage:', stored);
+                let addons = stored ? JSON.parse(stored) : {};
+                
+                // Ensure we have a plain object, not an array (arrays lose properties on JSON.stringify)
+                if (Array.isArray(addons) || typeof addons !== 'object' || addons === null) {
+                    console.log('Converting invalid stored value to object');
+                    addons = {};
+                }
+                
+                return addons;
+            } catch (e) {
+                console.error('Error reading selectedAddons:', e);
+                return {};
+            }
+        }
+
         // Save addons to localStorage
-        function saveAddons() {
-            localStorage.setItem('selectedAddons', JSON.stringify(selectedAddons));
-            // Also save the config every time to ensure it's always available
-            localStorage.setItem('addonsConfig', JSON.stringify(addonsConfig));
-            console.log('Saved addons to localStorage:', selectedAddons);
+        function saveAddons(addons) {
+            try {
+                localStorage.setItem('selectedAddons', JSON.stringify(addons));
+                localStorage.setItem('addonsConfig', JSON.stringify(addonsConfig));
+                console.log('Saved addons to localStorage:', addons);
+            } catch (e) {
+                console.error('Error saving addons:', e);
+            }
+        }
+
+        // Set button to selected state
+        function setButtonSelected(button) {
+            button.setAttribute('data-selected', 'true');
+            button.classList.remove('text-ctct-blue', 'hover:bg-ctct-blue', 'hover:text-white');
+            button.classList.add('bg-ctct-blue', 'text-white');
+            button.innerHTML = checkmarkSvg + '<span class="btn-text">Added</span>';
+        }
+
+        // Set button to unselected state
+        function setButtonUnselected(button) {
+            button.setAttribute('data-selected', 'false');
+            button.classList.remove('bg-ctct-blue', 'text-white');
+            button.classList.add('text-ctct-blue', 'hover:bg-ctct-blue', 'hover:text-white');
+            button.innerHTML = '<span class="btn-text">Add to plan</span>';
         }
 
         // Restore button states on page load
         function restoreButtonStates() {
+            const selectedAddons = getSelectedAddons();
             console.log('Restoring button states. Selected addons:', selectedAddons);
+            
             document.querySelectorAll('.addon-toggle-btn').forEach(button => {
                 const addonCard = button.closest('.addon-card');
                 if (!addonCard) return;
@@ -331,20 +363,26 @@
                 if (!h3) return;
                 
                 const addonName = h3.textContent.trim();
-                console.log('Checking addon:', addonName, 'Selected:', selectedAddons[addonName]);
+                console.log('Checking addon:', addonName, 'Selected:', !!selectedAddons[addonName]);
                 
                 if (selectedAddons[addonName]) {
-                    button.setAttribute('data-selected', 'true');
-                    button.classList.remove('text-ctct-blue', 'hover:bg-ctct-blue', 'hover:text-white');
-                    button.classList.add('bg-ctct-blue', 'text-white');
-                    button.innerHTML = checkmarkSvg + '<span class="btn-text">Added</span>';
+                    setButtonSelected(button);
+                } else {
+                    setButtonUnselected(button);
                 }
             });
         }
 
         // Initialize the page
         function initPage() {
-            // Restore button states
+            // Save addonsConfig to localStorage (so checkout page has it)
+            localStorage.setItem('addonsConfig', JSON.stringify(addonsConfig));
+            
+            // Initialize selectedAddons in localStorage if it doesn't exist
+            const currentAddons = getSelectedAddons();
+            saveAddons(currentAddons);
+            
+            // Restore button states from localStorage
             restoreButtonStates();
             
             // Toggle button handlers for selectable add-ons
@@ -359,24 +397,24 @@
                     const addonName = h3.textContent.trim();
                     const isSelected = this.getAttribute('data-selected') === 'true';
                     
+                    // Get fresh copy from localStorage
+                    const selectedAddons = getSelectedAddons();
+                    
                     if (!isSelected) {
                         // Select the add-on
-                        this.setAttribute('data-selected', 'true');
-                        this.classList.remove('text-ctct-blue', 'hover:bg-ctct-blue', 'hover:text-white');
-                        this.classList.add('bg-ctct-blue', 'text-white');
-                        this.innerHTML = checkmarkSvg + '<span class="btn-text">Added</span>';
+                        setButtonSelected(this);
                         selectedAddons[addonName] = true;
                         console.log('Added addon:', addonName);
                     } else {
                         // Deselect the add-on
-                        this.setAttribute('data-selected', 'false');
-                        this.classList.remove('bg-ctct-blue', 'text-white');
-                        this.classList.add('text-ctct-blue', 'hover:bg-ctct-blue', 'hover:text-white');
-                        this.innerHTML = '<span class="btn-text">Add to plan</span>';
+                        setButtonUnselected(this);
                         delete selectedAddons[addonName];
                         console.log('Removed addon:', addonName);
                     }
-                    saveAddons();
+                    
+                    // Save immediately
+                    saveAddons(selectedAddons);
+                    console.log('Current selections:', selectedAddons);
                 });
             });
 
@@ -384,7 +422,8 @@
             const continueBtn = document.querySelector('.lg\\:w-80 button');
             if (continueBtn) {
                 continueBtn.addEventListener('click', function() {
-                    saveAddons();
+                    const selectedAddons = getSelectedAddons();
+                    saveAddons(selectedAddons);
                     console.log('Proceeding to checkout with addons:', selectedAddons);
                     window.location.href = 'checkout-renewal.html';
                 });
