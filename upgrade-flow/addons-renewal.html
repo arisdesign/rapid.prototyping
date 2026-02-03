@@ -378,8 +378,12 @@
             // Save addonsConfig to localStorage (so checkout page has it)
             localStorage.setItem('addonsConfig', JSON.stringify(addonsConfig));
             
-            // Initialize selectedAddons in localStorage if it doesn't exist
+            // Initialize selectedAddons in localStorage
             const currentAddons = getSelectedAddons();
+            
+            // SMS Marketing is shown as "Already Added" (pre-purchased) in the UI,
+            // so ensure it's always included when visiting this page
+            currentAddons['SMS Marketing'] = true;
             saveAddons(currentAddons);
             
             // Restore button states from localStorage
